@@ -34,18 +34,3 @@ class ProductCreate(graphene.Mutation):
         return ProductCreate(product=product)
 
 
-class ProductVariantCreate(graphene.Mutation):
-    product_variant = graphene.Field(ProductVariantType)
-
-    class Arguments:
-        input = ProductVariantCreateInput
-
-    def clean_input(self, input):
-        return input
-
-    def mutate(self, root, _info, input):
-        cleaned_input = self.clean_input(input)
-
-        product_variant = ProductVariant.objects.create(**cleaned_input)
-
-        return ProductVariantCreate(product_variant=product_variant)
