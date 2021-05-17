@@ -1,6 +1,6 @@
 import graphene
-from .types import ProductType, ProductVariantType
-from ...product.models import Product, ProductVariant
+from .types import ProductType
+from ...product.models import Product
 
 
 class ProductCrateInput(graphene.InputObjectType):
