@@ -23,11 +23,13 @@ class ProductCreate(graphene.Mutation):
     class Arguments:
         input = ProductCrateInput(required=True)
 
-    def clean_input(self, input):
+    @classmethod
+    def clean_input(cls, input):
         return input
 
-    def mutate(self, root, _info, input):
-        cleaned_input = self.clean_input(input)
+    @classmethod
+    def mutate(cls, root, _info, input):
+        cleaned_input = cls.clean_input(input)
 
         product = Product.objects.create(**cleaned_input)
 
@@ -40,11 +42,13 @@ class ProductVariantCreate(graphene.Mutation):
     class Arguments:
         input = ProductVariantCreateInput
 
-    def clean_input(self, input):
+    @classmethod
+    def clean_input(cls, input):
         return input
 
-    def mutate(self, root, _info, input):
-        cleaned_input = self.clean_input(input)
+    @classmethod
+    def mutate(cls, root, _info, input):
+        cleaned_input = cls.clean_input(input)
 
         product_variant = ProductVariant.objects.create(**cleaned_input)
 

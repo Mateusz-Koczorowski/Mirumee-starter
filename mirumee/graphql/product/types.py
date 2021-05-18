@@ -1,7 +1,7 @@
 from graphene_django import DjangoObjectType
 
-from ...product.models import Product
-from ...product.models import ProductVariant
+from ...product.models import Product, ProductVariant
+
 
 class ProductType(DjangoObjectType):
     class Meta:
