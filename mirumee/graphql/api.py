@@ -1,16 +1,12 @@
 import graphene
-from ..graphql.product.schema import ProductQueries, ProductMutations, ProductVariantMutations
+
+from .product.schema import ProductQueries, ProductMutations
+from .checkout.schema import CheckoutMutations, CheckoutQueries
 
 
-class Query(ProductQueries):
+class Query(ProductQueries, CheckoutQueries):
     pass
 
 
-schema = graphene.Schema(query=Query)
-
-
-class Mutations(ProductMutations, ProductVariantMutations):
+class Mutations(ProductMutations, CheckoutMutations):
     pass
-
-
-schema = graphene.Schema(query=Query, mutation=Mutations)

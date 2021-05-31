@@ -6,7 +6,7 @@ from .mutations import ProductCreate, ProductVariantCreate
 
 class ProductQueries(graphene.ObjectType):
     product = graphene.Field(ProductType, id=graphene.Argument(graphene.ID, description="ID of product"))
-    product_variant = graphene.Field(ProductVariantType, id=graphene.Argument(graphene.ID,description="ID of variant"))
+    product_variant = graphene.Field(ProductVariantType, id=graphene.Argument(graphene.ID, description="ID of variant"))
 
     def resolve_product(self, _info, id):
         product = Product.objects.filter(id=id).first()
@@ -22,9 +22,4 @@ class ProductQueries(graphene.ObjectType):
 
 class ProductMutations(graphene.ObjectType):
     product_create = ProductCreate.Field()
-
-
-class ProductVariantMutations(graphene.ObjectType):
-    product_variant_crate = ProductVariantCreate.Field()
-
-
+    product_variant_create = ProductVariantCreate.Field()

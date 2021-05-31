@@ -39,8 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'graphene_django',
-
     'mirumee.product',
+    'mirumee.checkout',
 ]
 
 MIDDLEWARE = [

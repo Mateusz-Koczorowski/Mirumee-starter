@@ -3,7 +3,7 @@ from .types import ProductType, ProductVariantType
 from ...product.models import Product, ProductVariant
 
 
-class ProductCrateInput(graphene.InputObjectType):
+class ProductCreateInput(graphene.InputObjectType):
     name = graphene.String(required=True)
     price = graphene.Decimal(required=True)
     description = graphene.String(required=True)
@@ -11,7 +11,6 @@ class ProductCrateInput(graphene.InputObjectType):
 
 
 class ProductVariantCreateInput(graphene.InputObjectType):
-    product = graphene.String(required=True)
     name = graphene.String(required=True)
     sku = graphene.String(required=True)
     price = graphene.Decimal(required=True)
@@ -21,7 +20,7 @@ class ProductCreate(graphene.Mutation):
     product = graphene.Field(ProductType)
 
     class Arguments:
-        input = ProductCrateInput(required=True)
+        input = ProductCreateInput(required=True)
 
     @classmethod
     def clean_input(cls, input):
@@ -40,16 +39,16 @@ class ProductVariantCreate(graphene.Mutation):
     product_variant = graphene.Field(ProductVariantType)
 
     class Arguments:
-        input = ProductVariantCreateInput
+        input = ProductVariantCreateInput(required=True)
+        product_id = graphene.ID(required=True)
 
     @classmethod
     def clean_input(cls, input):
         return input
 
     @classmethod
-    def mutate(cls, root, _info, input):
+    def mutate(cls, root, _info, input, product_id):
         cleaned_input = cls.clean_input(input)
-
-        product_variant = ProductVariant.objects.create(**cleaned_input)
+        product_variant = ProductVariant.objects.create(product_id=product_id, **cleaned_input)
 
         return ProductVariantCreate(product_variant=product_variant)
