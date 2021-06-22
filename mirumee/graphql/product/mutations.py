@@ -1,9 +1,11 @@
-
 import graphene
 
 from .types import ProductType, ProductVariantType
 from ...product.models import Product, ProductVariant
-from ..core.utils import staff_member_required, superuser_required
+from ..core.utils import staff_member_required
+
+from django.core.exceptions import ValidationError
+
 
 class ProductCreateInput(graphene.InputObjectType):
     name = graphene.String(required=True)
@@ -19,16 +21,27 @@ class ProductCreate(graphene.Mutation):
         input = ProductCreateInput(required=True)
 
     @classmethod
-    def clean_input(cls, input):
-        # TODO price should be Decimal
-        return input
+    def validate_input(cls, input):
+
+        def validate_quantity(quantity):
+            if quantity <= 0:
+                raise ValidationError("Quantity have to be a positive value.")
+            return quantity
+
+        def validate_price(price):
+            if price <= 0:
+                raise ValidationError("Price have to be a positive value.")
+            return price
+
+        input['price'] = validate_price(input.get('price'))
+        input['quantity'] = validate_quantity(input.get('quantity'))
 
     @classmethod
     @staff_member_required
-    def mutate(cls, root, info, input):
-        cleaned_input = cls.clean_input(input)
+    def mutate(cls, root, _info, input):
+        cls.validate_input(input)
 
-        product = Product.objects.create(**cleaned_input)
+        product = Product.objects.create(**input)
 
         return ProductCreate(product=product)
 
@@ -40,28 +53,34 @@ class ProductVariantCreateInput(graphene.InputObjectType):
 
 
 class ProductVariantCreate(graphene.Mutation):
-    product_variant = graphene.Field(ProductVariantType)
+    productVariant = graphene.Field(ProductVariantType)
 
     class Arguments:
         input = ProductVariantCreateInput(required=True)
         product_id = graphene.ID(required=True)
 
     @classmethod
-    def clean_price(cls):
-        pass
+    def validate_input(cls, input, product_id):
 
-    @classmethod
-    def clean_input(cls, data):
-        cls.clean_price()
-        # sprawdzic czy cena nie jest ujemna
-        # sprawdzic czy produkt o podanym ID istnieje
-        # zlapac wyjatek gdy istnieje juz variant o podanym SKU
-        return data
+        def validate_product(product_id):
+            if not Product.objects.filter(id=product_id).exists():
+                raise ValidationError(f"A product with this ID: {product_id} does not exists.")
+            return product_id
+
+        def validate_sku(sku):
+            if ProductVariant.objects.filter(sku=sku).exists():
+                raise ValidationError(f"A product with this SKU: {sku} already exists.")
+            return sku
+
+        input['product_id'] = validate_product(input.get('product_id'))
+        input['sku'] = validate_sku(input.get('sku'))
+        input['price'] = ProductCreate.validate_input.validate_price(input.get('price'))
 
     @classmethod
     @staff_member_required
-    def mutate(cls, root, _info, input, product_id):
-        cleaned_input = cls.clean_input(input)
-        product_variant = ProductVariant.objects.create(product_id=product_id, **cleaned_input)
+    def mutate(cls, root, info, input, product_id):
+        cls.validate_input(input, product_id)
 
-        return ProductVariantCreate(product_variant=product_variant)
+        product_variant = ProductVariant.objects.create(**input, product_id=product_id)
+
+        return ProductVariantCreate(productVariant=product_variant)

@@ -1,7 +1,5 @@
 from django.db import models
 
-# Create your models here.
-
 
 class Product(models.Model):
     name = models.CharField(null=False, blank=False, max_length=50)
@@ -9,9 +7,15 @@ class Product(models.Model):
     description = models.CharField(null=False, blank=False, max_length=255)
     quantity = models.IntegerField(default=0)
 
+    def __str__(self):
+        return self.name
+
 
 class ProductVariant(models.Model):
-    product = models.ForeignKey(Product, related_name='varaints', on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, related_name='variants', on_delete=models.CASCADE)
     name = models.CharField(max_length=255, blank=False, null=False)
-    sku = models.CharField(max_length=255, null=False, blank=False, unique=True)
+    sku = models.CharField(max_length=255, blank=False, null=False, unique=True)
     price = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True)
+
+    def __str__(self):
+        return self.name
