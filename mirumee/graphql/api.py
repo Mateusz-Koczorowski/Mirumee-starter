@@ -15,4 +15,4 @@ class Mutations(ProductMutations, CheckoutMutations, AuthenticateMutations, User
     pass
 
 
-schema = graphene.Schema(query=Query,mutation=Mutations)
+schema = graphene.Schema(query=Query, mutation=Mutations)
