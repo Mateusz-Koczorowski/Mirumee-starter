@@ -34,4 +34,4 @@ def staff_member_required(func):
     def check_staff(*args, **kwargs):
         check_permission('is_staff', *args)
         return func(*args, **kwargs)
-    return check_staff
+    return

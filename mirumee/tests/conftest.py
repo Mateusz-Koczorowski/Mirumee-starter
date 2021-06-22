@@ -14,14 +14,14 @@ def client_query(client):
 
 @pytest.fixture
 def product():
-    Product.objects.create(
+    product = Product.objects.create(
         name="Test Product",
         description="Product description",
         price=Decimal("10.00"),
         quantity=10.00
     )
 
-    return Product
+    return product
 
 
 @pytest.fixture
@@ -33,4 +33,4 @@ def product_second():
         quantity=20.00
     )
 
-    return Product
+    return product

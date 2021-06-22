@@ -2,15 +2,19 @@ from graphene_django import DjangoObjectType
 import graphene
 from django.db.models import Avg
 
+from graphene_django import DjangoObjectType
+
 from ...product.models import Product, ProductVariant
+import graphene
+from django.db.models import Avg
 
 
 class ProductType(DjangoObjectType):
-    average_price = graphene.Decimal(description="average price of product")
+    average_price = graphene.Decimal(description='Average price of product.')
 
     class Meta:
         model = Product
-        fields = "__all__"
+        fields = '__all__'
 
     def resolve_average_price(self, _info):
         product = self.variants.all().aggregate(average_variant_price=Avg('price'))
@@ -24,4 +28,4 @@ class ProductType(DjangoObjectType):
 class ProductVariantType(DjangoObjectType):
     class Meta:
         model = ProductVariant
-        fields = "__all__"
+        fields = '__all__'
